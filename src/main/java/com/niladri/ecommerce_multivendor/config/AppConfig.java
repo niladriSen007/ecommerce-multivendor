@@ -1,6 +1,5 @@
 package com.niladri.ecommerce_multivendor.config;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,9 +24,9 @@ public class AppConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy
-                        .STATELESS)).authorizeHttpRequests(Authorize ->
-                        Authorize.requestMatchers("/api/**").authenticated()
-                                .requestMatchers("/api/v1/products/**").permitAll()
+                        .STATELESS)).authorizeHttpRequests(authorize ->
+                        authorize.requestMatchers("/api/v1/products/**","/api/v1/auth/signup","/api/v1/auth/login").permitAll()
+//                                .requestMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll()
                 ).addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -39,16 +38,13 @@ public class AppConfig {
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration corsConfiguration = new CorsConfiguration();
-                corsConfiguration.setAllowCredentials(true);
-                corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
-                corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-                return corsConfiguration;
-            }
+        return request -> {
+            CorsConfiguration corsConfiguration = new CorsConfiguration();
+            corsConfiguration.setAllowCredentials(true);
+            corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+            return corsConfiguration;
         };
     }
 
