@@ -1,6 +1,7 @@
 package com.niladri.ecommerce_multivendor.controller.auth;
 
 import com.niladri.ecommerce_multivendor.dto.authResponse.AuthResponse;
+import com.niladri.ecommerce_multivendor.dto.request.LoginRequest;
 import com.niladri.ecommerce_multivendor.dto.request.SendOtpRequest;
 import com.niladri.ecommerce_multivendor.dto.request.SignupRequest;
 import com.niladri.ecommerce_multivendor.service.auth.AuthService;
@@ -40,6 +41,16 @@ public class AuthController {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setToken(token);
         authResponse.setMessage("OTP sent successfully");
+        return ResponseEntity.ok(authResponse);
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
+        String token = authService.login(loginRequest);
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setToken(token);
+        authResponse.setMessage("User logged in successfully");
         return ResponseEntity.ok(authResponse);
     }
 }
